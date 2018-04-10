@@ -99,7 +99,6 @@
     "superagent-logger": "^1.1.0",
     "superagent-prefix": "0.0.2",
     "swagger-ui-express": "^2.0.15",
-    "util.promisify": "^1.0.0",
     "uuid": "^3.2.1",
     "uuid62": "^1.0.0",
     "vhost": "3.0.2",
