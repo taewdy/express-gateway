@@ -1,5 +1,4 @@
 module.exports.up = function () {
-  require('util.promisify/shim')();
   const log = require('migrate/lib/log');
   const path = require('path');
   const fs = require('fs');

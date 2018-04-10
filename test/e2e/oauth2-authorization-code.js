@@ -16,8 +16,6 @@ const webdriver = require('selenium-webdriver');
 const yaml = require('js-yaml');
 let tempPath;
 
-require('util.promisify/shim')();
-
 const { findOpenPortNumbers, generateBackendServer } =
   require('../common/server-helper');
 
