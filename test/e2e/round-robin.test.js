@@ -1,5 +1,5 @@
 const should = require('should');
-const request = require('superagent');
+const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
@@ -27,34 +27,27 @@ describe('round-robin load @balancing @proxy', () => {
     backendServers[0].close(() => backendServers[1].close(done));
   });
 
-  it('proxies with a round-robin balancer', done => {
+  it('proxies with a round-robin balancer', () => {
     const messages = [];
 
-    request
+    return axios
       .get(`http://localhost:${gatewayPort}/round-robin`)
-      .end((err, res) => {
-        if (err) return done(err);
-        should(res.statusCode).be.eql(200);
-        messages.push(res.text);
+      .then(res => {
+        should(res.status).be.eql(200);
+        messages.push(res.data);
 
-        request
-          .get(`http://localhost:${gatewayPort}/round-robin`)
-          .end((err, res) => {
-            if (err) return done(err);
-            should(res.statusCode).be.eql(200);
-            messages.push(res.text);
+        return axios.get(`http://localhost:${gatewayPort}/round-robin`);
+      })
+      .then(res => {
+        should(res.status).be.eql(200);
+        messages.push(res.data);
 
-            request
-              .get(`http://localhost:${gatewayPort}/round-robin`)
-              .end((err, res) => {
-                if (err) return done(err);
-                should(res.statusCode).be.eql(200);
-                messages.push(res.text);
-                should(messages[0]).not.eql(messages[1]);
-                should(messages[0]).eql(messages[2]);
-                done();
-              });
-          });
+        return axios.get(`http://localhost:${gatewayPort}/round-robin`);
+      }).then(res => {
+        should(res.status).be.eql(200);
+        messages.push(res.data);
+        should(messages[0]).not.eql(messages[1]);
+        should(messages[0]).eql(messages[2]);
       });
   });
 });
