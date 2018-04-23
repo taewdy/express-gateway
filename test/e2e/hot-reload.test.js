@@ -5,7 +5,7 @@ const path = require('path');
 const should = require('should');
 const chokidar = require('chokidar');
 const cpr = require('cpr');
-const request = require('superagent');
+const axios = require('axios').default.create({ validateStatus: () => true });
 const rimraf = require('rimraf');
 const tmp = require('tmp');
 const yaml = require('js-yaml');
@@ -80,13 +80,11 @@ describe('hot-reload', () => {
 
                   // Not ideal, but we need to make sure the process is running.
                   setTimeout(() => {
-                    request
-                      .get(`http://localhost:${originalGatewayPort}`)
-                      .end((err, res) => {
-                        should(err).not.be.undefined();
-                        should(res.unauthorized).not.be.undefined();
+                    axios.get(`http://localhost:${originalGatewayPort}`)
+                      .then(res => {
+                        should(res.status).be.eql(404);
                         done();
-                      });
+                      }).catch(done);
                   }, GATEWAY_STARTUP_WAIT_TIME);
                 });
               });
@@ -115,14 +113,11 @@ describe('hot-reload', () => {
         this.timeout(TEST_TIMEOUT);
         watcher.once('change', (evt) => {
           setTimeout(() => {
-            request
-              .get(`http://localhost:${originalGatewayPort}`)
-              .end((err, res) => {
-                should(err).not.be.undefined();
-                should(res.clientError).not.be.undefined();
-                should(res.statusCode).be.eql(404);
+            axios.get(`http://localhost:${originalGatewayPort}`)
+              .then(res => {
+                should(res.status).be.eql(404);
                 done();
-              });
+              }).catch(done);
           }, GATEWAY_STARTUP_WAIT_TIME);
         });
 
@@ -135,14 +130,11 @@ describe('hot-reload', () => {
       it('will respond with 404 - empty proxy', function (done) {
         this.timeout(TEST_TIMEOUT);
         watcher.once('change', () => {
-          request
-            .get(`http://localhost:${originalGatewayPort}`)
-            .end((err, res) => {
-              should(err).not.be.undefined();
-              should(res.clientError).not.be.undefined();
-              should(res.statusCode).be.eql(404);
+          axios.get(`http://localhost:${originalGatewayPort}`)
+            .then(res => {
+              should(res.status).be.eql(404);
               done();
-            });
+            }).catch(done);
         });
         // make config invalid
         fs.writeFileSync(testGatewayConfigPath, '{er:t4');
