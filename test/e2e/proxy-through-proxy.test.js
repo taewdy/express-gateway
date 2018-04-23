@@ -1,7 +1,7 @@
 const httpProxy = require('http-proxy');
 const http = require('http');
 const assert = require('assert');
-const request = require('superagent');
+const axios = require('axios').default.create({ validateStatus: () => true });
 const gwHelper = require('../common/gateway.helper');
 const cliHelper = require('../common/cli.helper');
 
@@ -61,10 +61,10 @@ const cliHelper = require('../common/cli.helper');
     });
 
     it(`should respect ${envVariable} env var and send through proxy`, () => {
-      return request
+      return axios
         .get(`http://localhost:${gatewayConfig.http.port}/test`)
-        .then((res) => {
-          assert.ok(res.text);
+        .catch(res => {
+          assert.ok(res.data);
           // we need to ensure that request went through proxy, not directly
           assert.ok(proxiedUrls[`${gatewayConfig.serviceEndpoints.backend.urls[0]}/test`], 'Proxy was not called');
         });
