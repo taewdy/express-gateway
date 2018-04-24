@@ -3,48 +3,41 @@ module.exports = function (client) {
   return {
     create (user) {
       return client
-        .post(baseUrl)
-        .send(user)
-        .then(res => res.body);
+        .post(baseUrl, user)
+        .then(res => res.data);
     },
     update (id, user) {
       return client
-        .put(`${baseUrl}${encodeURIComponent(id)}`)
-        .send(user)
-        .then(res => res.body);
+        .put(`${baseUrl}${encodeURIComponent(id)}`, user)
+        .then(res => res.data);
     },
     activate (id) {
       return client
-        .put(`${baseUrl}${encodeURIComponent(id)}/status`)
-        .send({ status: true })
-        .then(res => res.body);
+        .put(`${baseUrl}${encodeURIComponent(id)}/status`, { status: true })
+        .then(res => res.data);
     },
 
     deactivate (id) {
       return client
-        .put(`${baseUrl}${encodeURIComponent(id)}/status`)
-        .send({ status: false })
-        .then(res => res.body);
+        .put(`${baseUrl}${encodeURIComponent(id)}/status`, { status: false })
+        .then(res => res.data);
     },
 
     info (id) {
       return client
         .get(`${baseUrl}${encodeURIComponent(id)}`)
-        .then(res => res.body);
+        .then(res => res.data);
     },
     list (params) {
       return client
-        .get(baseUrl)
-        .query(params)
-        .then(res => {
-          return res.body;
-        });
+        .get(baseUrl, { params })
+        .then(res => res.data);
     },
 
     remove (id) {
       return client
         .del(`${baseUrl}${encodeURIComponent(id)}`)
-        .then(res => res.body);
+        .then(res => res.data);
     }
 
   };
