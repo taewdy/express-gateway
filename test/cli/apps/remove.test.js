@@ -61,7 +61,7 @@ describe('eg apps remove', () => {
             assert.equal(output, 'Removed ' + app1.id);
             done(new Error(app));
           }).catch((err) => {
-            assert.equal(err.message, 'Not Found');
+            assert.equal(err.response.status, 404);
             done();
           });
       });
@@ -116,7 +116,7 @@ describe('eg apps remove', () => {
             assert.equal(output, app1.id);
             done(new Error(app));
           }).catch((err) => {
-            assert.equal(err.message, 'Not Found');
+            assert.equal(err.response.status, 404);
             done();
           });
       });
